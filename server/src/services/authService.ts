@@ -28,10 +28,7 @@ class AuthService {
 
         const adminDto = new AdminDto(admin);
         const tokens = tokenService.generateTokens({ ...adminDto });
-        await pool.query(
-            'INSERT INTO tokens (admin_id, token) VALUES ($1, $2) RETURNING *',
-            [adminDto.adminId, tokens.refreshToken]
-        );
+        await tokenService.saveToken(adminDto.adminId, tokens.refreshToken);
         return {
             ...tokens,
             admin: adminDto

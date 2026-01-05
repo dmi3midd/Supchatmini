@@ -45,10 +45,11 @@ class AdminService {
         const adminId = uuidv4();
         const tempPassword = crs({ length: 12, type: 'alphanumeric' });
         const hashedPassword = await bcrypt.hash(tempPassword, config.BCRYPT_SALT_ROUNDS);
+        const registDate = new Date(Date.now()).toISOString().split("T")[0];
 
         const adminResult: QueryResult<IAdmin> = await pool.query(
-            'INSERT INTO admins (admin_id, username, email, hash_password, role, is_deleted) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
-            [adminId, email.split('@')[0], email, hashedPassword, role, false]
+            'INSERT INTO admins (admin_id, username, email, hash_password, role, regist_date, is_deleted) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *',
+            [adminId, email.split('@')[0], email, hashedPassword, role, registDate, false]
         );
 
         // sending email
