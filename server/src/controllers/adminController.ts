@@ -1,9 +1,9 @@
 import { validationResult } from "express-validator";
 import type { NextFunction, Request, Response } from "express";
-
 import adminService from "../services/adminService.js";
 import { ApiError } from "../exceptions/ApiError.js";
 import type { IAdmin } from "../types/postgresql/IAdmin.js";
+
 
 class AdminController {
     public async getAdminById(req: Request, res: Response, next: NextFunction) {
@@ -19,6 +19,20 @@ class AdminController {
             next(error);
         }
     }
+
+    public async getAdmins(req: Request, res: Response, next: NextFunction) {
+        try {
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return next(ApiError.BadRequest("Validation error", errors.array()));
+            }
+            const admins = await adminService.getAdmins();
+            return res.json(admins);
+        } catch (error) {
+            next(error);
+        }
+    }
+
     public async createAgent(req: Request, res: Response, next: NextFunction) {
         try {
             const errors = validationResult(req);

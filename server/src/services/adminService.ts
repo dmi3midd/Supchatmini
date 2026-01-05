@@ -9,26 +9,46 @@ import { ApiError } from "../exceptions/ApiError.js";
 import { AdminDto } from "../dtos/AdminDto.js";
 import type { IAdmin } from "../types/postgresql/IAdmin.js";
 
+
 class AdminService {
     public async getAdminById(adminId: string) {
         const pool = getPool();
 
         const adminResult: QueryResult<IAdmin> = await pool.query(
-            'SELECT * FROM admins WHERE admin_id = $1',
-            [adminId]
+            'SELECT * FROM admins WHERE admin_id = $1 AND is_deleted = $2',
+            [adminId, false]
         );
         const admin = adminResult.rows[0];
-        return admin;
+        return {
+            admin: admin ? new AdminDto(admin) : undefined
+        };
+    }
+
+    public async getAdmins() {
+        const pool = getPool();
+
+        const adminResult: QueryResult<IAdmin> = await pool.query(
+            'SELECT * FROM admins WHERE is_deleted = $1',
+            [false]
+        );
+        const admins = adminResult.rows;
+        return {
+            admins: admins.length > 0 ? admins.map((admin) =>  new AdminDto(admin)) : undefined
+        };
     }
 
     public async createAgent(email: string) {
         const admin = await this.createAdmin(email, 'agent');
-        return admin;
+        return {
+            admin: admin
+        };
     }
 
     public async createManager(email: string) {
         const admin = await this.createAdmin(email, 'manager');
-        return admin;
+        return {
+            admin: admin
+        };
     }
 
     private async createAdmin(email: string, role: 'agent' | 'manager') {
@@ -63,9 +83,7 @@ class AdminService {
 
         const admin = adminResult.rows[0] as IAdmin; // Type assertion (need to refactor later)
         const adminDto = new AdminDto(admin);
-        return {
-            admin: adminDto,
-        };
+        return adminDto;
     }
 
     async deleteAdmin(requesterId: string, targetId: string) {
