@@ -6,6 +6,7 @@ import cookieParser from 'cookie-parser';
 import { config } from './configs/env-config.js';
 import { errorMiddleware } from './middlewares/errorMiddleware.js';
 import authRouter from './routers/authRouter.js';
+import adminRouter from './routers/adminRouter.js'
 
 export const app = express();
 
@@ -16,4 +17,5 @@ app.use(cors({
 }));
 app.use(cookieParser());
 app.use('/api/auth', authRouter);
+app.use('/api/admins', adminRouter);
 app.use(errorMiddleware);
