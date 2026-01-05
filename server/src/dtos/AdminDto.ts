@@ -6,10 +6,12 @@ export class AdminDto implements IAdminDto {
     username: string;
     email: string;
     role: 'superadmin' | 'agent' | 'manager';
+    regist_date: string;
     constructor (admin: IAdmin) {
         this.adminId = admin.admin_id;
         this.username = admin.username;
         this.email = admin.email;
         this.role = admin.role;
+        this.regist_date = admin.regist_date;
     }
 }

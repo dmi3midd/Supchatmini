@@ -4,5 +4,6 @@ export interface IAdmin {
     email: string;
     hash_password: string;
     role: 'superadmin' | 'agent' | 'manager';
+    regist_date: string;
     is_deleted: boolean
 }
