@@ -1,6 +1,7 @@
 interface ProcessEnv {
     // server
     PORT: string;
+    WSS_PORT: string;
     CLIENT_URL: string;
 
     // postgreSQL
